@@ -4,7 +4,7 @@
 
 A Coinbase-oriented trading research and paper-simulation workspace with multi-asset strategies, fee-aware CAD accounting, portfolio charts, audit records and optional agent research.
 
-**Community source release · v0.1.0 · Python 3.11+ · Personal and noncommercial use**
+**Community source release · v0.1.1 · Python 3.11+ · Personal and noncommercial use**
 
 ## What it does
 

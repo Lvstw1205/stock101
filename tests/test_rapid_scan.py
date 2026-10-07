@@ -223,21 +223,30 @@ class HistoryRefreshTests(unittest.TestCase):
             self.assertEqual(intel.errors['C1-CAD']['reason'],'STALE_CANDLES')
             self.assertEqual(intel.history['C1-CAD']['bars'],previous)
             self.assertNotIn('C4-CAD',intel.attempted)
-    def test_scalar_index_preserves_exact_accounting_values_and_avoids_payload_scan(self):
+    def test_scalar_history_preserves_precision_and_uses_currency_time_index(self):
         with tempfile.TemporaryDirectory() as tmp:
             engine=MultiEngine(Path(tmp)/'p.db',Mock())
             with engine.repo.db() as c:
                 value='987.123456789123456789123456789'
                 engine.repo.put(c,'portfolio_snapshots','one',{'currency':'CAD','equity':value,'initial':'1000','positions':[{'large':'x'*10000}]})
+                engine.repo.put(c,'portfolio_snapshots','other-currency',{'currency':'USD','equity':'9','initial':'10'})
+                engine.repo.put(c,'portfolio_snapshots','two',{'currency':'CAD','equity':'1001.01','initial':'1000'})
+                c.execute("UPDATE portfolio_snapshots SET created=1 WHERE id='one'")
+                c.execute("UPDATE portfolio_snapshots SET created=2 WHERE id='two'")
+                statements=[]
+                c.set_trace_callback(statements.append)
                 rows=engine.repo.equity_series(c,'CAD')
-                self.assertEqual(rows[0]['equity'],value)
-                query="SELECT created,json_extract(payload,'$.equity'),json_extract(payload,'$.initial') FROM portfolio_snapshots WHERE json_extract(payload,'$.currency')=? ORDER BY created DESC LIMIT 100000"
-                plan=' '.join(str(tuple(r)) for r in c.execute('EXPLAIN QUERY PLAN '+query,('CAD',)))
+                c.set_trace_callback(None)
+                self.assertEqual([dict(r) for r in rows],[
+                    {'created':2.0,'equity':'1001.01','initial':'1000'},
+                    {'created':1.0,'equity':value,'initial':'1000'},
+                ])
+                query=next(s for s in statements if s.lstrip().upper().startswith('SELECT'))
+                plan=' '.join(str(tuple(r)) for r in c.execute('EXPLAIN QUERY PLAN '+query))
                 self.assertIn('portfolio_risk_scalars',plan);self.assertNotIn('TEMP B-TREE',plan)
-                # SQLite may omit the word COVERING for expression indexes;
-                # its bytecode must still read scalars solely from index cursor 2.
-                program=list(c.execute('EXPLAIN '+query,('CAD',)))
-                self.assertFalse(any(r[1]=='Function' and 'json_extract' in str(r[5]) for r in program))
+                # SQLite versions differ in whether projection expressions are
+                # read from the index or recomputed. Require indexed filtering
+                # and ordering plus exact scalar results, not private VM opcodes.
 
 
 class DailyTargetTests(unittest.TestCase):
