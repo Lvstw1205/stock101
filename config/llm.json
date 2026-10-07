@@ -1,0 +1,12 @@
+{
+  "primary": {
+    "base_url": "http://127.0.0.1:11434/v1",
+    "health_timeout": 2,
+    "response_timeout": 120
+  },
+  "fallback": {
+    "base_url": "http://127.0.0.1:11434/v1",
+    "health_timeout": 2,
+    "response_timeout": 120
+  }
+}

@@ -1,0 +1,20 @@
+# Stock101 — 한국어 시작 안내
+
+AI-Assisted Trading Research & Portfolio Lab
+
+다른 AIRI 설치 없이 이 저장소를 별도로 다운로드해 시작할 수 있습니다. Python 3.11 이상을
+설치한 뒤, 압축을 풀고 macOS에서 `Start.command`를 실행하세요. 첫 실행은 가상 환경을
+만들고 의존성을 설치하므로 인터넷 연결이 필요합니다.
+
+터미널에서는 `bash scripts/setup.sh` 다음 `.venv/bin/python run.py`를 실행합니다.
+브라우저 주소는 **http://127.0.0.1:8767** 입니다. 종료는 터미널에서 Ctrl+C 입니다.
+
+AI 대화·업무는 Ollama 설치 및 모델 다운로드가 필요합니다. 카메라 얼굴·손 모델은
+해당 저장소의 `scripts/download_vision_models.py`로 별도 설치합니다. 제공되지 않는
+계정이나 장치가 연결됐다고 표시하지 않으며, 사용자가 자신의 설정을 입력해야 합니다.
+
+개인 대화, API 키, 얼굴 등록 정보와 거래 내역은 포함하지 않았습니다. 사용 중 생성된
+정보는 `data/`에 저장됩니다. 그 폴더는 GitHub에 올리지 마세요.
+
+개인·비상업적 사용용 공개 소스입니다. 상업적 사용 조건은 [라이선스](LICENSE.md)를 확인하세요.
+기능 범위와 설치 방법은 [영문 README](README.md)에 정리되어 있습니다.
