@@ -4,7 +4,39 @@
 
 A Coinbase-oriented trading research and paper-simulation workspace with multi-asset strategies, fee-aware CAD accounting, portfolio charts, audit records and optional agent research.
 
-**Community source release · v0.1.1 · Python 3.11+ · Personal and noncommercial use**
+**Community source release · v0.1.2 · Python 3.11+ · Personal and noncommercial use**
+
+![Stock101 fresh paper workspace showing cash, equity and separate realized and unrealized profit labels](docs/images/paper-workspace.jpg)
+*Actual clean PAPER workspace with example virtual capital of 1,000 CAD. Simulation is stopped;
+there are no imported holdings, trades or demonstrated returns in this screenshot.*
+
+## Why this exists
+
+A trading dashboard needs to explain both its decisions and its accounting. Stock101 keeps
+market inputs, strategy evaluation, execution state and portfolio records visible, with
+separate PAPER and LIVE paths and clear differences between deposits, realized profit,
+unrealized profit and total equity.
+
+## Architecture at a glance
+
+```mermaid
+flowchart LR
+    Data[Market prices, candles and FX] --> Strategy[Strategy and research evaluation]
+    Strategy --> Checks[Costs, budget and data checks]
+    Checks --> Paper[PAPER fill simulation]
+    Checks -. separately enabled .-> Live[Coinbase LIVE adapter]
+    Paper --> Ledger[(Orders, fills and position ledger)]
+    Live --> Reconcile[Exchange reconciliation]
+    Reconcile --> Ledger
+    Ledger --> Accounting[CAD accounting and valuation]
+    Accounting --> UI[Portfolio charts, calendar and status]
+    Runtime[Restart and worker supervision] --> Strategy
+```
+
+**Stack:** Python, SQLite, Decimal accounting, browser JavaScript/SVG, Coinbase market-data
+adapters and optional LLM research. [Architecture and accounting walkthrough →](docs/ARCHITECTURE.md)
+
+[![Source checks](https://github.com/Lvstw1205/stock101/actions/workflows/checks.yml/badge.svg)](https://github.com/Lvstw1205/stock101/actions/workflows/checks.yml)
 
 ## What it does
 
@@ -53,8 +85,16 @@ not stop the server. Optional macOS login startup is installed with
 `.venv/bin/python scripts/install_autostart.py`; use `--remove` to uninstall that launcher.
 This is login startup, not execution while powered off. Keep the extracted folder in place.
 
+## Public release history
+
+This project was developed locally before its public release. The public repository starts
+with a sanitized source import on **7 October 2026**; private records and the original
+working history are not included. Subsequent fixes and documentation changes are recorded
+as ordinary commits. The import date is not a claim that all development happened that day.
+
 ## Documentation
 
+- [Architecture and code walkthrough](docs/ARCHITECTURE.md)
 - [한국어 시작 안내](README.ko.md)
 - [Setup and troubleshooting](docs/SETUP.md)
 - [Privacy and data handling](PRIVACY.md)
@@ -76,4 +116,5 @@ Required attribution is in [NOTICE](NOTICE).
 [AIRI Vision](https://github.com/Lvstw1205/airi-vision) ·
 [Stock101](https://github.com/Lvstw1205/stock101) ·
 [AIRI Playbook](https://github.com/Lvstw1205/airi-playbook) ·
-[Tim Works Beta](https://github.com/Lvstw1205/tim-works-beta)
+[Tim Works Beta](https://github.com/Lvstw1205/tim-works-beta) ·
+[AIRI Unhinged Voice](https://github.com/Lvstw1205/airi-unhinged-voice)
